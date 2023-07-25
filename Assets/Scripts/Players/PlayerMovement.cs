@@ -17,7 +17,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Speed")]
     [Tooltip("Player Base Speed")]
     public float baseSpeed;
-    [SerializeField]
     private float speed;
     [Tooltip("Player Sprint Speed Multiplier")]
     public float sprintMultiplier;
@@ -26,7 +25,6 @@ public class PlayerMovement : MonoBehaviour
     float xRotation;
     float yRotation;
 
-    // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
