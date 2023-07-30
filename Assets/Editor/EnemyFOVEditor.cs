@@ -19,10 +19,12 @@ public class EnemyFOVEditor : Editor
 
         if (fov.playerSeen)
         {
-            for (int i = 0; i < fov.Player.Length; i++)
+            Handles.color = Color.green;
+            Handles.DrawLine(fov.transform.position, fov.target.transform.position);
+            for(int i = 0; i < fov.checks.Length; i++)
             {
-                Handles.color = Color.green;
-                Handles.DrawLine(fov.transform.position, fov.Player[i].transform.position);
+                Handles.color = Color.red;
+                Handles.DrawLine(fov.transform.position, fov.checks[i].transform.position);
             }
         }
     }

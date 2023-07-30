@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,10 +11,9 @@ public class EnemyFOV : MonoBehaviour
     [Tooltip("The radius in which the AI see")]
     public float radius;
     [Tooltip("The angle in which the AI see")]
-    [Range(0,360)]
+    [Range(0, 360)]
     public float angle;
 
-    [HideInInspector]
     public GameObject[] Player;
 
     [Header("The Mask Configuration")]
@@ -23,34 +23,37 @@ public class EnemyFOV : MonoBehaviour
     public LayerMask obstruction;
 
     [HideInInspector]
-    public bool playerSeen = false;
-    [HideInInspector]
-    public Transform target;
+    public bool playerSeen { get; private set; } = false;
+    public Transform target { get; private set; }
+    public Collider[] checks { get; private set; }
 
     private float distanceToTarget;
 
-    EnemyMovement enemyMovement;
+    EnemyMovement _enemyMovement;
+    EnemyAttack _enemyAttack;
 
     private void Start()
     {
         Player = GameObject.FindGameObjectsWithTag("Player");
         StartCoroutine(FovRoutine());
        
-        enemyMovement = GetComponent<EnemyMovement>();
+        _enemyMovement = GetComponent<EnemyMovement>();
+        _enemyAttack = GetComponent<EnemyAttack>();
     }
 
     private void Update()
     {
         if(playerSeen)
         {
-            enemyMovement.chase();
-            enemyMovement.agent.autoBraking = false;
-
+            _enemyMovement.chase();
+            _enemyMovement.agent.autoBraking = false;
+            _enemyAttack.playerCam = target.GetComponentInChildren<Camera>();
         }
         else
         {
-            enemyMovement.patrol();
-            enemyMovement.agent.autoBraking = true;
+            _enemyMovement.patrol();
+            _enemyMovement.agent.autoBraking = true;
+            _enemyAttack.playerCam = null;
         }
             
     }
@@ -68,7 +71,7 @@ public class EnemyFOV : MonoBehaviour
 
     private void checkFOV()
     {
-        Collider[] checks = Physics.OverlapSphere(transform.position, radius, targetMask);
+        checks = Physics.OverlapSphere(transform.position, radius, targetMask);
 
         if (checks.Length != 0)
         {

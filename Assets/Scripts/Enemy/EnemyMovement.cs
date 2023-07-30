@@ -8,22 +8,28 @@ using System.IO;
 public class EnemyMovement : MonoBehaviour
 {
     public Transform[] patrolPoint;
-    private int destinationPoint = 0;
+    private int destinationPoint;
     private int posFailSafe;
 
-    EnemyFOV detectedPlayer;
+    [Header("Movement Speed")]
+    public float baseSpeed = 12;
+    public float chaseSpeedMultiplier = 1.5f;
+
+    EnemyFOV _detectedPlayer;
 
     [HideInInspector]
     public NavMeshAgent agent;
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        agent.speed = baseSpeed;
+        destinationPoint = Random.Range(0, patrolPoint.Length);
     }
 
     public void chase()
     {
-        detectedPlayer = GetComponent<EnemyFOV>();
-        agent.speed = agent.speed * 1.5f;
+        _detectedPlayer = GetComponent<EnemyFOV>();
+        agent.speed = baseSpeed * chaseSpeedMultiplier;
     }
 
     public void patrol()
@@ -33,14 +39,14 @@ public class EnemyMovement : MonoBehaviour
         
         agent.SetDestination(patrolPoint[destinationPoint].position);
         posFailSafe = destinationPoint;
-        agent.speed = 12f;
+        agent.speed = baseSpeed;
     }
 
     void Update()
     {
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
-            if (posFailSafe != destinationPoint && !detectedPlayer.playerSeen)
+            if (posFailSafe != destinationPoint && !_detectedPlayer.playerSeen)
             {
                 destinationPoint = Random.Range(0, patrolPoint.Length);
                 patrol();
@@ -49,9 +55,9 @@ public class EnemyMovement : MonoBehaviour
                 destinationPoint = Random.Range(0, patrolPoint.Length);
         }
 
-        if (detectedPlayer.playerSeen)
+        if (_detectedPlayer.playerSeen)
         {
-            agent.SetDestination(detectedPlayer.target.transform.position);
+            agent.SetDestination(_detectedPlayer.target.transform.position);
         }        
     }
 }

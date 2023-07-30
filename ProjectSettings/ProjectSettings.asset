@@ -758,8 +758,8 @@ PlayerSettings:
   apiCompatibilityLevelPerPlatform: {}
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: Mobile Horror
-  metroPackageVersion: 
+  metroPackageName: MobileHorror
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
@@ -767,7 +767,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Mobile Horror
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: Mobile Horror
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -835,7 +835,7 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 
+  cloudProjectId: 5d182339-64bc-4ce7-84d1-28a57013be4b
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: 

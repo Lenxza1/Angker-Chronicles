@@ -68,7 +68,8 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            speed = baseSpeed;
+            if(speed > baseSpeed)
+                speed = baseSpeed;
         }
     }
 }
