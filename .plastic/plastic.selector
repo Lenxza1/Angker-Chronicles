@@ -1,4 +1,0 @@
-repository "main@Anger_Chronicles@cloud"
-  path "/"
-    br "/main"
-    co "/main"
