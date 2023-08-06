@@ -26,13 +26,13 @@ public class EnemyMovement : MonoBehaviour
         destinationPoint = Random.Range(0, patrolPoint.Length);
     }
 
-    public void chase()
+    public void Chase()
     {
         _detectedPlayer = GetComponent<EnemyFOV>();
         agent.speed = baseSpeed * chaseSpeedMultiplier;
     }
 
-    public void patrol()
+    public void Patrol()
     {
         if (patrolPoint.Length == 0)
             return;
@@ -49,7 +49,7 @@ public class EnemyMovement : MonoBehaviour
             if (posFailSafe != destinationPoint && !_detectedPlayer.playerSeen)
             {
                 destinationPoint = Random.Range(0, patrolPoint.Length);
-                patrol();
+                Patrol();
             }
             else
                 destinationPoint = Random.Range(0, patrolPoint.Length);

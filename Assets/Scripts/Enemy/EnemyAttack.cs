@@ -7,30 +7,37 @@ public class EnemyAttack : MonoBehaviour
 {
     EnemyFOV _enemyFOV;
 
-
     public Camera playerCam;
 
-    private int playerFOV = 60;
+    private float playerFOV = 60f;
+    public float fovChangeSpeed = 1000f;
     void Start()
     {
         StartCoroutine(ChangePlayerFOV());
         _enemyFOV = GetComponent<EnemyFOV>();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.tag == "Player") 
+        {
+            Debug.Log("Kena");
+        }
+    }
+
     private IEnumerator ChangePlayerFOV()
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.05f);
-            if (_enemyFOV.playerSeen && playerFOV < 75)
+            yield return new WaitForSeconds(0.1f);
+            float targetFOV = _enemyFOV.playerSeen ? 75f : 60f;
+            if(_enemyFOV.playerSeen )
             {
-                playerFOV += 1;
-                Debug.Log("fov incremented");
+                playerFOV = Mathf.MoveTowards(playerFOV, targetFOV, fovChangeSpeed * Time.deltaTime);
             }
-            if (_enemyFOV.playerSeen == false && playerFOV > 60)
+            else
             {
-                playerFOV -= 1;
-                Debug.Log("fov decremented");
+                playerFOV = Mathf.MoveTowards(playerFOV, targetFOV, fovChangeSpeed * Time.deltaTime);
             }
         }
     }

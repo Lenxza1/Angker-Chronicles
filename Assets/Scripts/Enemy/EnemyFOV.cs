@@ -22,8 +22,7 @@ public class EnemyFOV : MonoBehaviour
     [Tooltip("The target mask which the AI can't see through")]
     public LayerMask obstruction;
 
-    [HideInInspector]
-    public bool playerSeen { get; private set; } = false;
+    [HideInInspector]public bool playerSeen { get; private set; }
     public Transform target { get; private set; }
     public Collider[] checks { get; private set; }
 
@@ -45,13 +44,13 @@ public class EnemyFOV : MonoBehaviour
     {
         if(playerSeen)
         {
-            _enemyMovement.chase();
+            _enemyMovement.Chase();
             _enemyMovement.agent.autoBraking = false;
             _enemyAttack.playerCam = target.GetComponentInChildren<Camera>();
         }
         else
         {
-            _enemyMovement.patrol();
+            _enemyMovement.Patrol();
             _enemyMovement.agent.autoBraking = true;
             _enemyAttack.playerCam = null;
         }
@@ -65,11 +64,11 @@ public class EnemyFOV : MonoBehaviour
         while (true)
         {
             yield return wait;
-            checkFOV();
+            CheckFOV();
         }
     }
 
-    private void checkFOV()
+    private void CheckFOV()
     {
         checks = Physics.OverlapSphere(transform.position, radius, targetMask);
 
