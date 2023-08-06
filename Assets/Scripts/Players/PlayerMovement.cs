@@ -11,7 +11,7 @@ public class PlayerMovement : MonoBehaviour
     public float sensY;
 
     [Header("Object Reference")]
-    public Transform player;
+    private CharacterController characterController;
     public Transform head;
 
     [Header("Movement Speed")]
@@ -21,7 +21,6 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("Player Sprint Speed Multiplier")]
     public float sprintMultiplier;
 
-
     float xRotation;
     float yRotation;
 
@@ -30,45 +29,53 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         speed = baseSpeed;
+        if (characterController == null )
+            characterController = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+        HandleMouseLook();
+
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        Vector3 movementDirection = transform.forward * moveVertical + transform.right * moveHorizontal;
+        movementDirection.y = 0f;
+
+        if(movementDirection.magnitude > 0f)
+            characterController.Move(speed * Time.deltaTime * movementDirection.normalized);
+
+        HandleSprint();
+
+#elif UNITY_ANDROID
+    // handle Android Movement
+#endif
+    }
+
+    void HandleMouseLook()
+    {
+        float mouseX = Input.GetAxisRaw("Mouse X") * sensX;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * sensY;
 
         xRotation -= mouseY;
-        yRotation += mouseX;
-
         xRotation = Mathf.Clamp(xRotation, -60f, 75f);
+        yRotation += mouseX;
 
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
         head.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+    }
 
-        if(Input.GetKey(KeyCode.W))
-        {
-            player.transform.Translate(Vector3.forward * speed * Time.deltaTime);
-        } 
-        if(Input.GetKey(KeyCode.S))
-        {
-            player.transform.Translate(Vector3.back * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            player.transform.Translate(Vector3.right * speed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            player.transform.Translate(Vector3.left * speed * Time.deltaTime);
-        }
+    void HandleSprint()
+    {
         if (Input.GetKey(KeyCode.LeftShift))
         {
             speed = baseSpeed * sprintMultiplier;
         }
         else
         {
-            if(speed > baseSpeed)
+            if (speed > baseSpeed)
                 speed = baseSpeed;
         }
     }

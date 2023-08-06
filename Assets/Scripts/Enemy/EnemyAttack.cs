@@ -48,6 +48,10 @@ public class EnemyAttack : MonoBehaviour
             {
                 playerFOV = Mathf.Clamp(playerFOV - fovChangeRate, initialPlayerFOV, maxPlayerFOV);
                 Debug.Log("fov decremented");
+                if(playerFOV < 59)
+                {
+                    PlayerCam = null;
+                }
             }
         }
     }
@@ -62,7 +66,7 @@ public class EnemyAttack : MonoBehaviour
         else
         {
             // Atur FOV kamera pemain ke nilai awal jika pemain tidak terlihat oleh musuh
-            PlayerCam.fieldOfView = initialPlayerFOV;
+            PlayerCam.fieldOfView = playerFOV;
         }
     }
 }

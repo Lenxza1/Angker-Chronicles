@@ -52,8 +52,6 @@ public class EnemyFOV : MonoBehaviour
         {
             _enemyMovement.Patrol();
             _enemyMovement.agent.autoBraking = true;
-            _enemyAttack.PlayerCam.fieldOfView = 60;
-            _enemyAttack.PlayerCam = null;
         }
             
     }
