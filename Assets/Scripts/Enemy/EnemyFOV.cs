@@ -22,9 +22,9 @@ public class EnemyFOV : MonoBehaviour
     [Tooltip("The target mask which the AI can't see through")]
     public LayerMask obstruction;
 
-    [HideInInspector]public bool playerSeen { get; private set; }
-    public Transform target { get; private set; }
-    public Collider[] checks { get; private set; }
+    [HideInInspector] public bool PlayerSeen { get; private set; } = false;
+    public Transform Target { get; private set; }
+    public Collider[] Checks { get; private set; }
 
     private float distanceToTarget;
 
@@ -42,16 +42,19 @@ public class EnemyFOV : MonoBehaviour
 
     private void Update()
     {
-        if(playerSeen)
+        if(PlayerSeen)
         {
             _enemyMovement.Chase();
             _enemyMovement.agent.autoBraking = false;
-            _enemyAttack.PlayerCam = target.GetComponentInChildren<Camera>();
+            _enemyAttack.PlayerCam = Target.GetComponentInChildren<Camera>();
         }
         else
         {
-            _enemyMovement.Patrol();
-            _enemyMovement.agent.autoBraking = true;
+            if(_enemyMovement.agent.remainingDistance < 0.5f)
+            {
+                _enemyMovement.Patrol();
+                _enemyMovement.agent.autoBraking = true;
+            }
         }
             
     }
@@ -70,27 +73,27 @@ public class EnemyFOV : MonoBehaviour
     private void CheckFOV()
     {
         // Mencari semua objek yang berada dalam radius FOV musuh dengan layer yang sesuai
-        checks = Physics.OverlapSphere(transform.position, radius, targetMask);
+        Checks = Physics.OverlapSphere(transform.position, radius, targetMask);
 
         // Jika ada objek yang terdeteksi dalam radius FOV
-        if (checks.Length != 0)
+        if (Checks.Length != 0)
         {
             // Menemukan target terdekat berdasarkan jarak dari musuh
-            Transform initialTarget = checks[0].transform;
+            Transform initialTarget = Checks[0].transform;
             float bestTargetPos = Vector3.Distance(transform.position, initialTarget.position);
-            Transform bestTarget = checks[0].transform;
-            for (int i = 0; i < checks.Length; i++)
+            Transform bestTarget = Checks[0].transform;
+            for (int i = 0; i < Checks.Length; i++)
             {
 
-                initialTarget = checks[i].transform;
+                initialTarget = Checks[i].transform;
                 distanceToTarget = Vector3.Distance(transform.position, initialTarget.position);
 
                 // Membandingkan jarak dengan target sebelumnya untuk menemukan target terdekat
                 if (distanceToTarget <= bestTargetPos)
                 {
                     bestTargetPos = distanceToTarget;
-                    bestTarget = checks[i].transform;
-                    target = bestTarget;
+                    bestTarget = Checks[i].transform;
+                    Target = bestTarget;
                 }
             }
 
@@ -105,18 +108,18 @@ public class EnemyFOV : MonoBehaviour
                 if (!Physics.Raycast(transform.position, directionToTarget, bestTargetPos, obstruction))
                 {
                     // Jika tidak dihalangi, pemain terlihat oleh musuh
-                    playerSeen = true;
+                    PlayerSeen = true;
                 }
                 else
                     // Jika tidak dihalangi, pemain terlihat oleh musuh
-                    playerSeen = false;
+                    PlayerSeen = false;
             }
             else
                 // Jika arah ke target terdekat berada di luar sudut FOV yang diizinkan, pemain tidak terlihat oleh musuh
-                playerSeen = false;
+                PlayerSeen = false;
         }
         else
             // Jika tidak ada objek yang terdeteksi dalam radius FOV, pemain tidak terlihat oleh musuh
-            playerSeen = false;        
+            PlayerSeen = false;        
     }
 }

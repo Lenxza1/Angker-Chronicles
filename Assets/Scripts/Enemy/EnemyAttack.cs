@@ -11,22 +11,25 @@ public class EnemyAttack : MonoBehaviour
     }
     [SerializeField] private int initialPlayerFOV = 60;
     [SerializeField] private int maxPlayerFOV = 75;
-    [SerializeField] private int fovChangeRate = 1;
+    [SerializeField] private int fovChangeRate = 5;
 
     private int playerFOV;
 
-    private EnemyFOV _enemyFOV;
+    EnemyFOV _enemyFOV;
+    Flashlight _flashlight;
 
     private void Start()
     {
         playerFOV = initialPlayerFOV;
         _enemyFOV = GetComponent<EnemyFOV>();
+        _flashlight = GameObject.Find("Flashlight").GetComponent<Flashlight>();
         StartCoroutine(ChangePlayerFOV());
+        StartCoroutine(PlayerFlashlightFlicker());
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.tag == "Player") 
+        if(other.gameObject.CompareTag("Player")) 
         {
             Debug.Log("Kena");
         }
@@ -36,19 +39,17 @@ public class EnemyAttack : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSecondsRealtime(0.05f);
 
-            if (_enemyFOV.playerSeen && playerFOV < maxPlayerFOV)
+            if (_enemyFOV.PlayerSeen && playerFOV < maxPlayerFOV)
             {
                 playerFOV = Mathf.Clamp(playerFOV + fovChangeRate, initialPlayerFOV, maxPlayerFOV);
-                Debug.Log("fov incremented");
             }
 
-            if (!_enemyFOV.playerSeen && playerFOV > initialPlayerFOV)
+            if (!_enemyFOV.PlayerSeen && playerFOV > initialPlayerFOV)
             {
                 playerFOV = Mathf.Clamp(playerFOV - fovChangeRate, initialPlayerFOV, maxPlayerFOV);
-                Debug.Log("fov decremented");
-                if(playerFOV < 59)
+                if(playerFOV < initialPlayerFOV - 1)
                 {
                     PlayerCam = null;
                 }
@@ -56,17 +57,36 @@ public class EnemyAttack : MonoBehaviour
         }
     }
 
+    private IEnumerator PlayerFlashlightFlicker()
+    {
+        if (_enemyFOV.Checks != null)
+        {
+            while (_enemyFOV.Checks.Length != 0)
+            {
+                _flashlight.flashlight.intensity = 0;
+
+                yield return new WaitForSecondsRealtime(0.5f);
+
+                _flashlight.flashlight.intensity = 2;
+            }
+        }
+    }
+
     private void Update()
     {
-        if (_enemyFOV.playerSeen)
+
+        if(PlayerCam != null)
         {
-            // Set FOV kamera pemain jika pemain terlihat oleh musuh
-            PlayerCam.fieldOfView = playerFOV;
-        }
-        else
-        {
-            // Atur FOV kamera pemain ke nilai awal jika pemain tidak terlihat oleh musuh
-            PlayerCam.fieldOfView = playerFOV;
+            if (_enemyFOV.PlayerSeen)
+            {
+                // Set FOV kamera pemain jika pemain terlihat oleh musuh
+                PlayerCam.fieldOfView = playerFOV;
+            }
+            else
+            {
+                // Atur FOV kamera pemain ke nilai awal jika pemain tidak terlihat oleh musuh
+                PlayerCam.fieldOfView = playerFOV;
+            }
         }
     }
 }

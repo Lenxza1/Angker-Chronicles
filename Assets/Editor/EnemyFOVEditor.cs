@@ -17,14 +17,14 @@ public class EnemyFOVEditor : Editor
         Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngle1 * fov.radius);
         Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngle2 * fov.radius);
 
-        if (fov.playerSeen)
+        if (fov.PlayerSeen)
         {
             Handles.color = Color.green;
-            Handles.DrawLine(fov.transform.position, fov.target.transform.position);
-            for(int i = 0; i < fov.checks.Length; i++)
+            Handles.DrawLine(fov.transform.position, fov.Target.transform.position);
+            for(int i = 0; i < fov.Checks.Length; i++)
             {
                 Handles.color = Color.red;
-                Handles.DrawLine(fov.transform.position, fov.checks[i].transform.position);
+                Handles.DrawLine(fov.transform.position, fov.Checks[i].transform.position);
             }
         }
     }

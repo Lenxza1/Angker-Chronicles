@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,7 +18,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Speed")]
     [Tooltip("Player Base Speed")]
     public float baseSpeed;
-    private float speed;
+    [Tooltip("Player Speed")]
+    public float speed;
     [Tooltip("Player Sprint Speed Multiplier")]
     public float sprintMultiplier;
 
@@ -29,8 +31,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         speed = baseSpeed;
-        if (characterController == null )
-            characterController = GetComponent<CharacterController>();
+        characterController = GetComponent<CharacterController>();
     }
 
     void Update()
@@ -44,11 +45,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 movementDirection = transform.forward * moveVertical + transform.right * moveHorizontal;
         movementDirection.y = 0f;
 
-        if(movementDirection.magnitude > 0f)
-            characterController.Move(speed * Time.deltaTime * movementDirection.normalized);
+        characterController.Move(speed * Time.deltaTime * movementDirection);
 
         HandleSprint();
-
 #elif UNITY_ANDROID
     // handle Android Movement
 #endif
@@ -75,7 +74,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            if (speed > baseSpeed)
+            if(speed > baseSpeed)
                 speed = baseSpeed;
         }
     }
